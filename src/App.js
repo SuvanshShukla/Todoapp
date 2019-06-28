@@ -177,7 +177,7 @@ class Todo extends React.Component {
     
   }
 
-  birthday(){
+ /*  birthday(){
     let m = this.state.list
 
     for (let i=0; i<m.lenght; i++){
@@ -192,7 +192,7 @@ class Todo extends React.Component {
     return (this.setState({
       list: m
     }));    
-  }
+  } */
 
   render() {
     return (
