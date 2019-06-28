@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import "papercss/dist/paper.css"
+import "node_modules/axios/lib/axios.js"
 
 
 function App() {
@@ -19,10 +20,6 @@ class Todo extends React.Component {
     this.state.list = props.list;
     this.state.addItem = "";
     this.state.lol = [];
-    this.state.pcent = 0;
-    this.exit = "";
-    this.enter = "";
-    this.bgc = "";
   }
 
   words(e) {
@@ -177,22 +174,7 @@ class Todo extends React.Component {
     
   }
 
- /*  birthday(){
-    let m = this.state.list
-
-    for (let i=0; i<m.lenght; i++){
-      m[i].bday = i;
-      if(m[i]<m[i+1]){
-        let temp = m[i];
-        m[i] = m[i+1];
-        m[i+1] = temp;
-      }
-      else {}
-    }      
-    return (this.setState({
-      list: m
-    }));    
-  } */
+ 
 
   render() {
     return (
@@ -206,8 +188,8 @@ class Todo extends React.Component {
           <div className="progress margin-bottom col-4">
             <div className="bar striped secondary" style={{ width: `${(this.state.lol.length / this.state.list.length) * 100}%` }}> </div>
           </div>
-          <div><button onClick={(e)=> {this.birthday()}}>sort 1</button></div>
-        </div>    
+        </div>  
+
         <div>
           {this.state.list.map((x, i) => (
             <div className={(x.anim ? "row flex-center animated bounceIn" : "row flex-center animated bounceOut")} key={i}>
