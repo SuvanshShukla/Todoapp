@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import "papercss/dist/paper.css"
-import "node_modules/axios/lib/axios.js"
+import axios from 'axios';
 
 
 function App() {
@@ -20,7 +20,18 @@ class Todo extends React.Component {
     this.state.list = props.list;
     this.state.addItem = "";
     this.state.lol = [];
-  }
+    this.state.count=0
+     
+    axios.get(`http://localhost:8080/tasks`).then(res=>{
+      const list = res.data;
+      this.setState({
+        list
+      })        
+      console.log(res)
+      console.log(res.data)     
+    }) 
+    
+  }  
 
   words(e) {
     this.setState({
@@ -30,66 +41,78 @@ class Todo extends React.Component {
 
   clicker() {
     let l = this.state.list;
-    let obj = { title: this.state.addItem, status: false, pinned: false, anim: true }
-    if (obj.title !== "") { l.push(obj); }
+    let obj = { title: this.state.addItem, status: false, pinned: false, anim: true}
+    
+     axios.post("http://localhost:8080/tasks",obj).then((res)=>{      
+      if (obj.title !== "") { 
+        l.push(res.data); 
 
-    this.setState({
-      list: l,
-      addItem: ""
-    })
+
+        this.setState({
+        list:l, 
+        addItem:""
+        }) 
+      }      
+    })    
   }
 
   colorify(i) {
-    let m = this.state.list;
+    let m = this.state.list;    
     m[i].status = !m[i].status;
-    this.setState({
-      list: m
-    })
 
-    if (m[i].status === true) {
-      let z = this.state.lol;
-      z.push(1);
+    axios.put("http://localhost:8080/tasks/status",m[i]).then(res=>{
       this.setState({
-        lol: z
-      })
+        list: m
+      }) 
+    })   
+  }
+
+  count(){
+    let count1=0;
+    let m = this.state.list;
+
+    for(var j=0; j<m.length; j++){
+      if(m[j].status===true){
+        count1 ++;
+      }
     }
-    else if (m[i].status === false) {
-      let z = this.state.lol;
-      z.pop()
-      this.setState({
-        lol: z
-      })
-    }
+    return count1
   }
 
   removeItem(i) {
     let m = this.state.list
-    m[i].anim = false;
 
-    this.setState({
-      list: m
-    })
+    axios.delete("http://localhost:8080/tasks/"+m[i]._id).then(res=>{
+      console.log("delete",res.data);     
 
-    console.log(this.state.list);
+      m[i].anim = false;
 
-    if (m[i].status) {
-      let count = this.state.lol;
-      count.pop()
-      this.setState({
-        lol: count
-      })
-    }
-
-    setTimeout(() => {
-      console.log("waiting");
-      m.splice(i, 1);
       this.setState({
         list: m
       })
-    }, 1000);
+  
+      console.log(this.state.list);
+  
+      if (m[i].status) {
+        let count = this.state.lol;
+        count.pop()
+        this.setState({
+          lol: count
+        })
+      }
+  
+      setTimeout(() => {
+        console.log("waiting");
+        m.splice(i, 1);
+        this.setState({
+          list: m
+        })
+      }, 1000);
 
-
-
+      console.log(this.state.list);
+      
+  
+    })
   }
 
   downy(i) {
@@ -123,12 +146,18 @@ class Todo extends React.Component {
   pressed(e) {
     if (e.key === "Enter") {
       let l = this.state.list;
-      let obj = { title: this.state.addItem, status: false, pinned: false,  anim: true, bday:0 };
-      if (obj.title !== "") { l.push(obj); }
-      this.setState({
-        list: l,
-        addItem: ""
-      })
+      let obj = { title: this.state.addItem, status: false, pinned: false,  anim: true};
+
+      axios.post("http://localhost:8080/tasks",obj).then((res)=>{
+        if (obj.title !== "") { l.push(res.data); }
+
+        this.setState({
+          list: l,
+          addItem: ""
+        });
+        // console.log(res.data);
+        
+      })      
     }
   }
 
@@ -184,9 +213,9 @@ class Todo extends React.Component {
           <button onClick={() => { this.clicker() }} className="col col-5 background-secondary">Add Item</button>
         </div >
         <div className="row flex-center">
-          <h4 className="text-lead flex-center col-12">Completed Tasks:{this.state.lol.length}/{this.state.list.length}</h4>
+          <h4 className="text-lead flex-center col-12">Completed Tasks:{this.count()}/{this.state.list.length}</h4>
           <div className="progress margin-bottom col-4">
-            <div className="bar striped secondary" style={{ width: `${(this.state.lol.length / this.state.list.length) * 100}%` }}> </div>
+            <div className="bar striped secondary" style={{ width: `${(this.count())/(this.state.list.length) * 100}%` }}> </div>
           </div>
         </div>  
 
