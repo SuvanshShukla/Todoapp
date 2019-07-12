@@ -21,6 +21,12 @@ class Todo extends React.Component {
     this.state.addItem = "";
     this.state.lol = [];
     this.state.count=0
+   
+    
+    
+  }  
+
+  componentDidMount() {
     axios.get(`http://localhost:8080/tasks`).then(res=>{
       const list = res.data;
       this.setState({
@@ -28,13 +34,7 @@ class Todo extends React.Component {
       })        
       console.log(res)
       console.log(res.data)     
-    }) 
-    
-    
-  }  
-
-  componentDidMount() {
-    
+    })  
   }
 
   words(e) {
