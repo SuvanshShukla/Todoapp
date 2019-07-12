@@ -21,7 +21,6 @@ class Todo extends React.Component {
     this.state.addItem = "";
     this.state.lol = [];
     this.state.count=0
-     
     axios.get(`http://localhost:8080/tasks`).then(res=>{
       const list = res.data;
       this.setState({
@@ -31,7 +30,12 @@ class Todo extends React.Component {
       console.log(res.data)     
     }) 
     
+    
   }  
+
+  componentDidMount() {
+    
+  }
 
   words(e) {
     this.setState({
@@ -59,8 +63,12 @@ class Todo extends React.Component {
   colorify(i) {
     let m = this.state.list;    
     m[i].status = !m[i].status;
+    console.log(m[i]);
+    
+    axios.put("http://localhost:8080/tasks/status",m[i]).then((res)=>{
+      console.log(res.data)
 
-    axios.put("http://localhost:8080/tasks/status",m[i]).then(res=>{
+      // m[i]= res.data;
       this.setState({
         list: m
       }) 
@@ -222,7 +230,7 @@ class Todo extends React.Component {
         <div>
           {this.state.list.map((x, i) => (
             <div className={(x.anim ? "row flex-center animated bounceIn" : "row flex-center animated bounceOut")} key={i}>
-              <button className={(x.status ? "btn btn-success col-7" : "btn col-7") + (x.pinned ? "btn btn-warning col-7" : "btn col-7")} onClick={(e) => { this.colorify(i) }} onDoubleClick={(e) => { this.pinner(i) }}>{x.title}</button>
+              <button className={(x.status ? "btn btn-success col-7" : "btn col-7") + (x.pinned ? "btn btn-warning col-7" : "btn col-7")} onClick={() => { this.colorify(i) }} onDoubleClick={(e) => { this.pinner(i) }}>{x.title}</button>
               <button onClick={(e) => { this.removeItem(i) }} className="btn btn-danger" >X</button>
               <button onClick={(e) => { this.downy(i) }} className="background-secondary">↓</button>
               <button onClick={(e) => { this.uppy(i) }} className="background-warning">↑</button>
